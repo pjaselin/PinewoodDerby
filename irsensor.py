@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 BEAM_PIN = 17 #27
-# BEAM_PIN2 = 22
+BEAM_PIN2 = 27
 # BEAM_PIN3 = 18
 
 
@@ -21,11 +21,12 @@ def break_beam_callback(pin):
         print("broken", pin)
 
 GPIO.setmode(GPIO.BCM)
+
 GPIO.setup(BEAM_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(BEAM_PIN, GPIO.BOTH, callback=lambda _: break_beam_callback(BEAM_PIN))
 
-# GPIO.setup(BEAM_PIN2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# GPIO.add_event_detect(BEAM_PIN2, GPIO.BOTH,  callback=lambda _: break_beam_callback(BEAM_PIN2))
+GPIO.setup(BEAM_PIN2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(BEAM_PIN2, GPIO.BOTH,  callback=lambda _: break_beam_callback(BEAM_PIN2))
 
 
 # GPIO.setup(BEAM_PIN3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
