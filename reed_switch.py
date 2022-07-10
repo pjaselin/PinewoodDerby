@@ -8,6 +8,9 @@ def reed_switch_cb(pin):
     if GPIO.input(pin):
         print("Open")
         # start the internal timer
+    else:
+        print("Closed")
+        # reset the timer maybe, need to see what gets shared across callbacks
 
 GPIO.add_event_detect(18, GPIO.BOTH, callback=lambda _: reed_switch_cb(18))
 
