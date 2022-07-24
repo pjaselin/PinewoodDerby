@@ -26,8 +26,7 @@ GPIO.setup(BEAM_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(BEAM_PIN, GPIO.BOTH, callback=lambda _: break_beam_callback(BEAM_PIN))
 
 GPIO.setup(BEAM_PIN2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(BEAM_PIN2, GPIO.BOTH,  callback=lambda _: break_beam_callback(BEAM_PIN2))
-
+GPIO.add_event_detect(BEAM_PIN2, GPIO.BOTH, callback=lambda _: break_beam_callback(BEAM_PIN2))
 
 # GPIO.setup(BEAM_PIN3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # GPIO.add_event_detect(BEAM_PIN3, GPIO.BOTH,  callback=lambda _: start_gate_callback(BEAM_PIN3))

@@ -80,6 +80,8 @@ def main():
         time.sleep(0.6)
         seg.text = "123456789.3.."
         time.sleep(1.6)
+        seg.text = "----------"
+        time.sleep(1.6)
 
     # Digit slicing
     print("Digit slicing")
