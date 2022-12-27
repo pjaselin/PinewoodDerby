@@ -3,4 +3,4 @@ loguru~=0.6.0
 RPi.GPIO~=0.7.1
 python-socketio~=5.7.2
 dash-extensions==0.0.71
-dash-bootstrap-components==
+dash-bootstrap-components==1.2.1
