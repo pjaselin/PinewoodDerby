@@ -74,14 +74,14 @@ def main():
 
     print('Simple text...')
     for _ in range(10):
-        seg.text = ""
-        time.sleep(0.6)
-        seg.text = "888.888888.8."
-        time.sleep(0.6)
-        seg.text = "123456789.3.."
-        time.sleep(1.6)
-        seg.text = "----------"
-        time.sleep(1.6)
+        seg.text = "12345   12345"
+        time.sleep(5)
+        seg.text = "-"*16
+        time.sleep(5)
+        seg.text = "3"*16
+        time.sleep(5)
+        seg.text = "8."*16
+        time.sleep(5)
 
     # Digit slicing
     print("Digit slicing")

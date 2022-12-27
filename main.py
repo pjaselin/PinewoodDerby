@@ -22,6 +22,7 @@ from luma.core.interface.serial import spi, noop
 from luma.core.virtual import sevensegment
 import RPi.GPIO as GPIO
 from loguru import logger
+import socketio
 
 # IR sensor GPIO pins
 IR_BEAM_PIN1 = 17
@@ -35,35 +36,56 @@ serial = spi(port=0, device=0, gpio=noop())
 device = max7219(serial, cascaded=2, blocks_arranged_in_reverse_order=True)
 display = sevensegment(device)
 
+# clear display at initialization
+display.text = ""
+
 # GPIO setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(REED_SWITCH_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(REED_SWITCH_PIN, GPIO.BOTH, callback=lambda _: reed_switch_cb(REED_SWITCH_PIN))
 
+# create a Socket.IO server
+sio = socketio.AsyncServer()
+
+# wrap with ASGI application
+app = socketio.ASGIApp(sio)
 
 class Lane:
     def __init__(self, pin=None, lane=None) -> None:
         self.pin = pin
         self.lane = lane
-        self.time = None
-        self.position = None
+        self.time = "----"
+        self.position = "-"
+        self.is_active = False
 
-    def start(self):
-        self.time = None
-        self.position = None
+    def start(self, start_time):
+        self._start_time = start_time
+        self.time = "----"
+        self.position = "-"
+        self.is_active = True
     
     def finish(self, start_time, position):
+        if not self.is_active:
+            return
         abs_time = perf_counter() - start_time
+        print(abs_time)
         # If the timer exceeds 9999 seconds, show 9999, otherwise store
         # the time rounded to 4 digits
-        if abs_time >= 9999:
-            self.time = "9999"
-        else:
-            self.time = '{:g}'.format(float('{:.4g}'.format(abs_time)))
+        # if abs_time >= 9999:
+            # self._finish_time = "9999"
+        # else:
+        self._finish_time = perf_counter() #'{:g}'.format(float('{:.4g}'.format(abs_time))).zfill(4)
         # Store the given position
-        self.position = position
+        self.position = str(position)
+        self.is_active = False
+        # send completion to web app
+        sio.emit('my event', {'data': 'foobar'})
         return
     
+    def time(self):
+        abs_time = 
+        return '{:g}'.format(float('{:.4g}'.format(abs_time))).zfill(4)
+        
     def status(self):
         return f"{self.time}{self.position}"
 
@@ -85,16 +107,20 @@ class RaceMonitor:
             GPIO.add_event_detect(pin, GPIO.BOTH, callback=lambda _: break_beam_cb(pin))
     
     def display_status(self):
-        display_text = ""
-        for lane in self._register:
-            display_text += lane.status()
+        display_times = ""
+        display_positions = ""
+        for lane in self._register.values():
+            display_times += lane.time
+            display_positions += lane.position
+        print(display_times + display_positions)
+        display.text = display_times + display_positions
         return
     
     def start_race(self):
         # Record the start time start time
         self._start_time = perf_counter()
         self._race_active = True
-        for lane in self._register:
+        for lane in self._register.values():
             lane.start()
         logger.info("Start race")
     
@@ -136,7 +162,9 @@ def break_beam_cb(pin):
 
 try:
     while True:
+        monitor.display_status()
         sleep(0.5)
-except:
+except Exception as e:
+    print(e)
     print("Goodbye")
     GPIO.cleanup()
