@@ -2,7 +2,7 @@
 Main script for Pinewood Derby Timer
 
 Initialization:
-- Set all digits to show "-" TODO: swap middle and upper right segments on large digits
+- Set all digits to show "8" at start to check fit
 
 Procedure:
 - On reed switch open:
@@ -37,7 +37,7 @@ device = max7219(serial, cascaded=2, blocks_arranged_in_reverse_order=True)
 display = sevensegment(device)
 
 # clear display at initialization
-display.text = ""
+display.text = "8"*16
 
 # GPIO setup
 GPIO.setmode(GPIO.BCM)

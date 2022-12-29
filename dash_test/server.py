@@ -1,13 +1,16 @@
-from time import sleep
-import socketio
+import asyncio
+import json
+import random
+from quart import websocket, Quart
 
-# create a Socket.IO server
-sio = socketio.AsyncServer()
+app = Quart(__name__)
 
-# wrap with ASGI application
-app = socketio.ASGIApp(sio)
+@app.websocket("/random_data")
+async def random_data():
+    while True:
+        output = json.dumps([random.random() for _ in range(10)])
+        await websocket.send(output)
+        await asyncio.sleep(1)
 
-while True:
-    for i in range(2):
-        sio.emit('my event', {'data': 'foobar'})
-        sleep(2)
+if __name__ == "__main__":
+    app.run(port=5000)
